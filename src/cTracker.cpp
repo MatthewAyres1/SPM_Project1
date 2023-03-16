@@ -22,7 +22,7 @@ void cTracker::draw()
 //--------------------------------------------------------------
 void cTracker::update()
 {
-    // Implement any update logic specific to cTracker here
+    
 }
 
 //--------------------------------------------------------------
