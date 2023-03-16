@@ -23,6 +23,7 @@ public:
     int     getRowY(int row) { return row * CELL_SIZE + CELL_SIZE / 2; }
     cLife*  getLifeAtPos(int row, int col) const { return m_life[row][col]; }
     void    setLifeAtPos(cLife* pLife, int row, int col);
+    void updateLifeObjects();
     int     getLivingCellCount(void) const;
 
     virtual std::vector<cLife*> queryNeighboursWithinDistance(cLife* pLife, int distance);

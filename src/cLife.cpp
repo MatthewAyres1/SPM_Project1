@@ -3,6 +3,7 @@
 #include <algorithm>
 #include "ofMain.h"
 #include "cLife.h"
+#include "cTracker.h"
 
 
 const std::string   cLife::mk_LifeName{ "life" };
@@ -44,6 +45,17 @@ cLife& cLife::operator=(const cLife& other)
 void cLife::setup()
 {
 }
+
+void cLife::setTracker(cTracker* tracker) {
+    m_tracker = tracker;
+}
+
+void cLife::updateTracker() {
+    if (m_tracker != nullptr) {
+        m_tracker->update();
+    }
+}
+
 
 //--------------------------------------------------------------
 void cLife::draw()

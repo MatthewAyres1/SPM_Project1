@@ -7,6 +7,8 @@
 
 using NeighbourClassMap = std::map<std::string, size_t>;
 
+class cTracker;
+
 class cLife
 {
 public:   // accessible by any caller
@@ -25,6 +27,8 @@ public:   // accessible by any caller
     virtual int  getHealth() { return m_health;  }
     virtual void setPosition(int x, int y);
     virtual void getPosition(int& x, int& y);
+    void setTracker(cTracker* tracker);
+    void updateTracker();
     
     // note - each class that derives from cLife should have its own name and spawn()
     static std::string getLifeName() { return mk_LifeName; }
@@ -51,7 +55,7 @@ protected:  // accessible by this class and derived classes
 
 
 private:  // accessible by this class only
-
+    cTracker* m_tracker = nullptr;
     //Unused stuff. how far to check for neighbours?
     //  virtual cLife* spawn(int x, int y);
     //  virtual int  getNeighbourThreshold() { return neighbourThreshold; }

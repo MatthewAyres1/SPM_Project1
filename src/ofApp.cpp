@@ -3,6 +3,7 @@
 #include "ofApp.h"
 #include "cLife.h"
 #include "cBlob.h"
+#include "cTracker.h"
 // #include any other life class headers here
 
 
@@ -20,6 +21,7 @@ std::map<std::string, LifeSpawnFunction>    lifeFactory =
 {
     {cLife::getLifeName(), cLife::spawn },
     {cBlob::getLifeName(), cBlob::spawn },
+    {cTracker::getLifeName(), cTracker::spawn },
 
     // your class' static getName function and spawn function get added here
 };
@@ -76,9 +78,9 @@ void    ofApp::createNewGeneration()
 
     case Patterns::Beacon:
         lifeCellsList.push_back(std::make_pair(anchorRow, anchorCol + 1));
-        lifeCellsList.push_back(std::make_pair(anchorRow + 1, anchorCol)); 
+        lifeCellsList.push_back(std::make_pair(anchorRow + 1, anchorCol));
         lifeCellsList.push_back(std::make_pair(anchorRow + 1, anchorCol + 1));
-        lifeCellsList.push_back(std::make_pair(anchorRow+ 2, anchorCol + 2));
+        lifeCellsList.push_back(std::make_pair(anchorRow + 2, anchorCol + 2));
         lifeCellsList.push_back(std::make_pair(anchorRow + 2, anchorCol + 3));
         lifeCellsList.push_back(std::make_pair(anchorRow + 3, anchorCol + 2));
         lifeCellsList.push_back(std::make_pair(anchorRow + 3, anchorCol + 3));
@@ -96,7 +98,7 @@ void    ofApp::createNewGeneration()
     case Patterns::Peak:
         lifeCellsList.push_back(std::make_pair(anchorRow, anchorCol + 1));
         lifeCellsList.push_back(std::make_pair(anchorRow, anchorCol + 2));
-        lifeCellsList.push_back(std::make_pair(anchorRow+1, anchorCol + 1));
+        lifeCellsList.push_back(std::make_pair(anchorRow + 1, anchorCol + 1));
         break;
     }
 
@@ -108,7 +110,7 @@ void    ofApp::createNewGeneration()
     lifeName = cLife::getLifeName();
     for (auto& pair : lifeCellsList)
     {
-        cLife * pLife = lifeFactory[lifeName](m_cellMatrix.getColX(pair.second), m_cellMatrix.getRowY(pair.first));
+        cLife* pLife = lifeFactory[lifeName](m_cellMatrix.getColX(pair.second), m_cellMatrix.getRowY(pair.first));
         m_cellMatrix.setLifeAtPos(pLife, pair.first, pair.second);
     }
     lifeCellsList.clear();
@@ -116,18 +118,19 @@ void    ofApp::createNewGeneration()
 
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
     if (!m_runSim)
         return;
+
+    // Call update() on each life object in the cell matrix
+    m_cellMatrix.updateLifeObjects();
 
     // tell all cells to update
     m_cellMatrix.update();
 
     // if there aren't any living cells after a fixed number of updates, generate some new Life
-    if (m_cellMatrix.getLivingCellCount() == 0)
-    {
-        if (--m_resetCountdown <= 0)
-        {
+    if (m_cellMatrix.getLivingCellCount() == 0) {
+        if (--m_resetCountdown <= 0) {
             createNewGeneration();
             return;
         }
@@ -136,7 +139,7 @@ void ofApp::update(){
         m_resetCountdown = RESET_FRAME_COUNT;
 
     // pause execution for a bit - 1.5 seconds
-    ofSleepMillis(1500);
+    ofSleepMillis(1000);
 }
 
 //--------------------------------------------------------------
@@ -188,9 +191,24 @@ void ofApp::mousePressed(int x, int y, int button){
 }
 
 //--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
+void ofApp::mouseReleased(int x, int y, int button) {
 
+    // gets the row and column of the mouse click
+    int row = m_cellMatrix.getHeight() * y / ofGetWindowHeight();
+    int col = m_cellMatrix.getWidth() * x / ofGetWindowWidth();
+
+    if (row >= 0 && row < m_cellMatrix.getHeight() && col >= 0 && col < m_cellMatrix.getWidth()) {
+        if (button == 0) {
+            cLife* pLife = lifeFactory[cLife::getLifeName()](m_cellMatrix.getColX(col), m_cellMatrix.getRowY(row));
+            m_cellMatrix.setLifeAtPos(pLife, row, col);
+        }
+        else {
+            cLife* pLife = lifeFactory[cTracker::getLifeName()](m_cellMatrix.getColX(col), m_cellMatrix.getRowY(row));
+            m_cellMatrix.setLifeAtPos(pLife, row, col);
+        }
+    }
 }
+
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y){

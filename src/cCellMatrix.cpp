@@ -8,6 +8,7 @@
 // cCellMatrix constructor
 //  initialize the 2d array of cells; this actually means an array of arrays of (width) cells
 //  initialise the Query object the life classes can use to find out about life around themselves
+
 cCellMatrix::cCellMatrix(int width, int height)
     : iCellQuery{},  m_lifeWidth{ width / CELL_SIZE }, m_lifeHeight{ height / CELL_SIZE },
     m_life { m_lifeHeight, std::vector<cLife*>{ (const unsigned int) m_lifeWidth, nullptr} }
@@ -34,6 +35,20 @@ cCellMatrix::~cCellMatrix()
 
 //--------------------------------------------------------------
 // create each Life and set the center position of each during construction
+
+void cCellMatrix::updateLifeObjects() {
+    for (int row = 0; row < getHeight(); ++row) {
+        for (int col = 0; col < getWidth(); ++col) {
+            cLife* life = getLifeAtPos(row, col);
+            if (life != nullptr) {
+                life->updateTracker();
+            }
+        }
+    }
+}
+
+
+
 void cCellMatrix::setup()
 {
     
